@@ -34,8 +34,8 @@ FLOAT_PATTERN = '\d+(?:\.\d+)*'
 DAYS = re.compile('(' + FLOAT_PATTERN + ')d')
 HOURS = re.compile('(' + FLOAT_PATTERN + ')h')
 MINUTES = re.compile('(' + FLOAT_PATTERN + ')m')
-SECONDS = re.compile('(' + FLOAT_PATTERN + ')(?:s|\Z)')
-TIME_UNITS = re.compile('(' + FLOAT_PATTERN + ')[dhms\Z]')
+SECONDS = re.compile('(' + FLOAT_PATTERN + ')(?:s|\\\Z)')
+TIME_UNITS = re.compile('(' + FLOAT_PATTERN + ')[dhms\\\Z]')
 
 def normalize_memory(memory):
     """

@@ -78,25 +78,23 @@ class PBS(drmr.drm.base.DistributedResourceManager):
         {{raw_preamble}}
         {% endif %}
 
-
         ####  End PBS preamble
 
         {% if notes %}
         ####  Notes
         {{notes}}
-        {% endif %}
 
+        {% endif %}
         {% if environment_setup %}
         ####  Environment setup
         {% for line in environment_setup %}
         {{line}}
         {% endfor %}
-        {% endif %}
 
+        {% endif %}
         ####  Commands
 
         {{command}}
-
 
         """
     ).lstrip()

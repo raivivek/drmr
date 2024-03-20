@@ -7,8 +7,6 @@
 # Licensed under Version 3 of the GPL or any later version
 #
 
-from __future__ import print_function
-
 import copy
 import datetime
 import inspect
@@ -29,8 +27,8 @@ class DistributedResourceManager(object):
     default_job_template = ''
     default_array_command_template = textwrap.dedent(
         """
-        if [ "$THE_DRM_ARRAY_JOB_INDEX_ID" = "{index}" ]; then
-            {command}
+        if [ "$THE_DRM_ARRAY_JOB_INDEX_ID" = "{{index}}" ]; then
+            {{command}}
         fi
         """
     )
@@ -86,17 +84,24 @@ class DistributedResourceManager(object):
     def make_job_filename(self, job_data):
         """Create a name for the job file in the control directory."""
         self.make_control_directory(job_data)
-        return drmr.util.absjoin(job_data['control_directory'], job_data['job_name'] + '.' + self.name.lower())
+        return drmr.util.absjoin(
+            job_data['control_directory'],
+            job_data['job_name'] + '.' + self.name.lower()
+        )
 
     def make_array_command(self, command_data):
         template_environment = jinja2.Environment()
-        return template_environment.from_string(self.default_array_command_template).render(**command_data)
+        return template_environment.from_string(
+            self.default_array_command_template
+        ).render(**command_data)
 
     def make_job_script(self, job_data):
         """Format a job template, suitable for submission to the DRM."""
         template_data = self.make_job_script_data(job_data)
         template_environment = jinja2.Environment(trim_blocks=True, lstrip_blocks=True)
-        return template_environment.from_string(self.default_job_template).render(**template_data)
+        return template_environment.from_string(self.default_job_template).render(
+            **template_data
+        )
 
     def make_job_script_data(self, job_data):
         """Prepare the job data for interpolation into the job file template."""

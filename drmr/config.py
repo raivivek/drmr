@@ -3,6 +3,7 @@
 # managers.
 #
 # Copyright 2015 Stephen Parker
+# Copyright 2023 Vivek Rai
 #
 # Licensed under Version 3 of the GPL or any later version
 #
@@ -14,12 +15,16 @@ import os
 
 import drmr.drm.PBS
 import drmr.drm.Slurm
+import drmr.drm.LSF
+import drmr.drm.UGE
 import drmr.exceptions
 
 
 RESOURCE_MANAGERS = {
     'PBS': drmr.drm.PBS.PBS,
     'Slurm': drmr.drm.Slurm.Slurm,
+    'LSF': drmr.drm.LSF.LSF,
+    'UGE': drmr.drm.UGE.UGE,
 }
 
 
@@ -27,6 +32,7 @@ def get_available_resource_managers():
     available_resource_managers = []
     for name, rm in RESOURCE_MANAGERS.items():
         if rm().is_installed():
+            print(rm().is_installed())
             available_resource_managers.append(name)
     return available_resource_managers
 
