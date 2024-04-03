@@ -7,7 +7,7 @@
 # Licensed under Version 3 of the GPL or any later version
 #
 
-from __future__ import print_function
+
 
 import collections
 import logging
@@ -207,7 +207,7 @@ class PBS(drmr.drm.base.DistributedResourceManager):
             dependency_list = []
             if not isinstance(dependencies, collections.Mapping):
                 raise ValueError('Job data does not contain a map under the "dependencies" key.')
-            for state, job_ids in dependencies.items():
+            for state, job_ids in list(dependencies.items()):
                 if state not in self.job_dependency_states:
                     raise ValueError('Unsupported dependency state: %s' % state)
 

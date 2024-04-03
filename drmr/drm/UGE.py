@@ -7,9 +7,9 @@
 # Licensed under Version 3 of the GPL or any later version
 #
 
-from __future__ import print_function
 
-import collections
+
+from collections.abc import Mapping
 import logging
 import os
 import subprocess
@@ -59,16 +59,15 @@ class UGE(drmr.drm.base.DistributedResourceManager):
         {% if dependencies %}
         #$ -hold_jid {{resource_manager.make_dependency_string(dependencies)}}
         {% endif %}
-        #$ -o "{{control_directory}}/{{job_name}}_$SGE_TASK_ID.out"
-        #$ -e "{{control_directory}}/{{job_name}}_$SGE_TASK_ID.err"
+        #$ -o "{{control_directory}}/{{job_name}}_$JOB_ID.out"
+        #$ -e "{{control_directory}}/{{job_name}}_$JOB_ID.err"
         
         {% if array_controls %}
-        #$ -t {{array_controls['array_index_min']|default(1)}}-{{array_controls['array_index_max']|default(1)}}{% if array_controls['array_concurrent_jobs'] %}:{{array_controls['array_concurrent_jobs']}}{% endif %}
+        #$ -t {{array_controls['array_index_min']|default(1)}}-{{array_controls['array_index_max']|default(1)}}
+        #$ -tc {{array_controls['array_concurrent_jobs']|default(1)}}
         {% endif %}
 
-        {% if raw_preamble %}
-        {{raw_preamble}}
-        {% endif %}
+        {% if raw_preamble %}{{raw_preamble}}{% endif %}
 
         #### End UGE preamble
 
@@ -181,11 +180,12 @@ class UGE(drmr.drm.base.DistributedResourceManager):
 
     def make_dependency_string(self, dependencies):
         dependency_string = ''
+        print(dependencies)
         if dependencies:
             dependency_list = []
-            if not isinstance(dependencies, collections.Mapping):
+            if not isinstance(dependencies, Mapping):
                 raise ValueError('Job data does not contain a map under the "dependencies" key.')
-            for state, job_ids in dependencies.items():
+            for state, job_ids in list(dependencies.items()):
                 if state not in self.job_dependency_states:
                     raise ValueError('Unsupported dependency state: %s' % state)
 
@@ -220,7 +220,7 @@ class UGE(drmr.drm.base.DistributedResourceManager):
 
     def set_mail_event_string(self, job_data):
         if job_data.get('mail_events'):
-            job_data['mail_event_string'] = ','.join(
+            job_data['mail_event_string'] = ''.join(
                 sorted(
                     self.mail_event_map[event] for event in job_data['mail_events']
                 )

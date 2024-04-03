@@ -70,7 +70,7 @@ def tally_time_units(regex, time_string):
 def parse_time(time_string):
     m = TIME.match(time_string)
     if m:
-        return {k: v and float(v) or 0.0 for k, v in m.groupdict().items()}
+        return {k: v and float(v) or 0.0 for k, v in list(m.groupdict().items())}
 
     if TIME_UNITS.search(time_string) is None:
         raise SyntaxError('Could not find a time in "{}"'.format(time_string))

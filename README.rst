@@ -3,7 +3,11 @@ drmr
 ====
 
 A tool for submitting pipeline scripts to distributed resource
-managers.
+managers. Current supported resource managers:
+* Slurm
+* PBS
+* LSF
+* UGE
 
 Introduction
 ============
@@ -43,7 +47,7 @@ for subsequent tasks.
 Requirements
 ============
 
-* Python. We've run it successfully under versions 2.7.10 and 3.5.
+* Python 3
 * Jinja2 (If you install drmr with pip, Jinja2 should be installed automatically.)
 * lxml (Again, pip should install it for you.)
 

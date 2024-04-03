@@ -29,7 +29,7 @@ class LSF(drmr.drm.base.DistributedResourceManager):
 
         #BSUB -J {{job_name}}
         {% if nodes %}
-        #BSUB -n {{nodes}}
+        #BSUB -n {{processors|default(1)}}
         {% endif %}
         {% if node_properties %}
         #BSUB -R "{{node_properties.split(',')[0]}}"
@@ -181,7 +181,7 @@ class LSF(drmr.drm.base.DistributedResourceManager):
             dependency_list = []
             if not isinstance(dependencies, collections.Mapping):
                 raise ValueError('Job data does not contain a map under the "dependencies" key.')
-            for state, job_ids in dependencies.items():
+            for state, job_ids in list(dependencies.items()):
                 if state not in self.job_dependency_states:
                     raise ValueError('Unsupported dependency state: %s' % state)
 
