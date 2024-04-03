@@ -3,18 +3,19 @@ drmr
 ====
 
 A tool for submitting pipeline scripts to distributed resource
-managers. Current supported resource managers:
-* Slurm
-* PBS
-* LSF
-* UGE
+managers.
 
 Introduction
 ============
 
 Drmr (pronounced 'drummer') lets you write computational pipelines in
 simple shell scripts. It's designed to work with common distributed
-resource management (DRM) systems (Slurm and PBS so far).
+resource management (DRM) systems. Current supported resource managers:
+
+* Slurm
+* PBS
+* LSF
+* UGE
 
 Why another pipeline tool?
 --------------------------
@@ -56,15 +57,17 @@ Installation
 
 At the command line::
 
-  git clone https://github.com/ParkerLab/drmr
+  git clone https://github.com/raivivek/drmr
   pip install ./drmr
 
 Or in one step::
 
-  pip install git+https://github.com/ParkerLab/drmr
+  pip install git+https://github.com/raivivek/drmr
 
 Documentation
 =============
+
+Note that documentation is not updated for version 1.0.0+.
 
 https://drmr.readthedocs.io/
 
