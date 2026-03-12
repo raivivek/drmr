@@ -8,13 +8,14 @@
 #
 
 
+import collections.abc
 import copy
 import decimal
 import os
 import re
 
 
-MEMORY = re.compile('^([0-9]+)(?:([gkmt])b?)?$', re.IGNORECASE)
+MEMORY = re.compile(r'^([0-9]+)(?:([gkmt])b?)?$', re.IGNORECASE)
 
 # First, let me apologize for you having to spend part of your life
 # trying to parse this nasty regular expression.
@@ -23,19 +24,19 @@ MEMORY = re.compile('^([0-9]+)(?:([gkmt])b?)?$', re.IGNORECASE)
 # lookahead expressions that make sure we only extract days and hours
 # if the rest of the time is present.
 TIME = re.compile(
-    '\A(?:(?:(?P<days>\d+(?:\.\d+)*)?[-:])(?=(?:\d+(?:\.\d+)?)(?::\d+(?:\.\d+)?)(?::(?:\d+(?:\.\d+)?))))?'
-    '(?:(?P<hours>\d+(?:\.\d+)*)?:(?=(?:\d+(?:\.\d+)?)(?::(?:\d+(?:\.\d+)?))))?'
-    '(?P<minutes>\d+(?:\.\d+)?)'
-    '(?::(?P<seconds>\d+(?:\.\d+)?))?\Z'
+    r'\A(?:(?:(?P<days>\d+(?:\.\d+)*)?[-:])(?=(?:\d+(?:\.\d+)?)(?::\d+(?:\.\d+)?)(?::(?:\d+(?:\.\d+)?))))?'
+    r'(?:(?P<hours>\d+(?:\.\d+)*)?:(?=(?:\d+(?:\.\d+)?)(?::(?:\d+(?:\.\d+)?))))?'
+    r'(?P<minutes>\d+(?:\.\d+)?)'
+    r'(?::(?P<seconds>\d+(?:\.\d+)?))?\Z'
 )
 
-FLOAT_PATTERN = '\d+(?:\.\d+)*'
+FLOAT_PATTERN = r'\d+(?:\.\d+)*'
 
 DAYS = re.compile('(' + FLOAT_PATTERN + ')d')
 HOURS = re.compile('(' + FLOAT_PATTERN + ')h')
 MINUTES = re.compile('(' + FLOAT_PATTERN + ')m')
-SECONDS = re.compile('(' + FLOAT_PATTERN + ')(?:s|\\\Z)')
-TIME_UNITS = re.compile('(' + FLOAT_PATTERN + ')[dhms\\\Z]')
+SECONDS = re.compile('(' + FLOAT_PATTERN + r')(?:s|$)')
+TIME_UNITS = re.compile('(' + FLOAT_PATTERN + r')[dhms$]')
 
 def normalize_memory(memory):
     """
@@ -144,7 +145,19 @@ def absjoin(*paths):
 
 
 def merge_mappings(*mappings):
-    merged_mapping = copy.deepcopy(mappings[0])
-    for mapping in mappings[1:]:
-        merged_mapping.update(mapping)
-    return merged_mapping
+    """Merge mappings recursively"""
+
+    result = {}
+    for mapping in mappings:
+        if not isinstance(mapping, collections.abc.Mapping):
+            continue
+        for key, value in mapping.items():
+            if isinstance(value, collections.abc.Mapping):
+                existing = result.get(key)
+                if isinstance(existing, collections.abc.Mapping):
+                    result[key] = merge_mappings(existing, value)
+                else:
+                    result[key] = merge_mappings(value)
+            else:
+                result[key] = copy.deepcopy(value)
+    return result

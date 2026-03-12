@@ -120,7 +120,7 @@ class PBS(drmr.drm.base.DistributedResourceManager):
         'FAIL': 'a',
     }
 
-    array_job_id_re = re.compile('^\S+\[.*\]')
+    array_job_id_re = re.compile(r'^\S+\[.*\]')
 
     def delete_jobs(self, job_ids=None, job_name=None, job_owner=None, dry_run=False):
         logger = self.get_method_logger()

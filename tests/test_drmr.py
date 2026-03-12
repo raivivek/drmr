@@ -109,7 +109,7 @@ class TestPBS(unittest.TestCase):
         qmgr_content = '#!/bin/sh\necho "pbs_version = fake"\n'
         with open('qmgr', 'w') as qmgr:
             qmgr.write(qmgr_content)
-        os.chmod('qmgr', 0755)
+        os.chmod('qmgr', 0o755)
         self.assertTrue(resource_manager.is_installed())
 
         try:
@@ -120,7 +120,7 @@ class TestPBS(unittest.TestCase):
         qsub_content = '#!/bin/sh\necho "1"\n'
         with open('qsub', 'w') as qsub:
             qsub.write(qsub_content)
-        os.chmod('qsub', 0755)
+        os.chmod('qsub', 0o755)
 
         job_id = resource_manager.submit('qmgr')
 
@@ -129,15 +129,15 @@ class TestPBS(unittest.TestCase):
         except OSError:
             pass  # right, qdel doesn't exist
 
-        qdel_content = '#!/bin/sh\n[[ $1 = "1" ]] || exit 1\n'
+        qdel_content = '#!/bin/sh\n[ "$1" = "1" ] || exit 1\n'
         with open('qdel', 'w') as qdel:
             qdel.write(qdel_content)
-        os.chmod('qdel', 0755)
+        os.chmod('qdel', 0o755)
 
         qstat_content = '#!/bin/sh\necho "<Data><Job><Job_Id>1</Job_Id><job_name>test</job_name><job_state>Q</job_state><Job_Owner>test_owner</Job_Owner></Job></Data>"\n'
         with open('qstat', 'w') as qstat:
             qstat.write(qstat_content)
-        os.chmod('qstat', 0755)
+        os.chmod('qstat', 0o755)
 
         try:
             resource_manager.delete_jobs(["2"])
@@ -186,7 +186,7 @@ class TestSlurm(unittest.TestCase):
         scontrol_content = '#!/bin/sh\necho "slurm something something"\n'
         with open('scontrol', 'w') as scontrol:
             scontrol.write(scontrol_content)
-        os.chmod('scontrol', 0755)
+        os.chmod('scontrol', 0o755)
         self.assertTrue(resource_manager.is_installed())
 
         try:
@@ -197,7 +197,7 @@ class TestSlurm(unittest.TestCase):
         sbatch_content = '#!/bin/sh\necho "1"\n'
         with open('sbatch', 'w') as sbatch:
             sbatch.write(sbatch_content)
-        os.chmod('sbatch', 0755)
+        os.chmod('sbatch', 0o755)
 
         job_id = resource_manager.submit('scontrol')
 
@@ -206,15 +206,15 @@ class TestSlurm(unittest.TestCase):
         except OSError:
             pass  # right, scancel doesn't exist
 
-        scancel_content = '#!/bin/sh\n[[ $1 = "1" ]] || exit 1\n'
+        scancel_content = '#!/bin/sh\n[ "$1" = "1" ] || exit 1\n'
         with open('scancel', 'w') as scancel:
             scancel.write(scancel_content)
-        os.chmod('scancel', 0755)
+        os.chmod('scancel', 0o755)
 
         squeue_content = '#!/bin/sh\necho "1,test_job.1,test_owner"\n'
         with open('squeue', 'w') as squeue:
             squeue.write(squeue_content)
-        os.chmod('squeue', 0755)
+        os.chmod('squeue', 0o755)
 
         try:
             resource_manager.delete_jobs(["2"])
