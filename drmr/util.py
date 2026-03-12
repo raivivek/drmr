@@ -23,19 +23,19 @@ MEMORY = re.compile('^([0-9]+)(?:([gkmt])b?)?$', re.IGNORECASE)
 # lookahead expressions that make sure we only extract days and hours
 # if the rest of the time is present.
 TIME = re.compile(
-    '\A(?:(?:(?P<days>\d+(?:\.\d+)*)?[-:])(?=(?:\d+(?:\.\d+)?)(?::\d+(?:\.\d+)?)(?::(?:\d+(?:\.\d+)?))))?'
-    '(?:(?P<hours>\d+(?:\.\d+)*)?:(?=(?:\d+(?:\.\d+)?)(?::(?:\d+(?:\.\d+)?))))?'
-    '(?P<minutes>\d+(?:\.\d+)?)'
-    '(?::(?P<seconds>\d+(?:\.\d+)?))?\Z'
+    r'\A(?:(?:(?P<days>\d+(?:\.\d+)*)?[-:])(?=(?:\d+(?:\.\d+)?)(?::\d+(?:\.\d+)?)(?::(?:\d+(?:\.\d+)?))))?'
+    r'(?:(?P<hours>\d+(?:\.\d+)*)?:(?=(?:\d+(?:\.\d+)?)(?::(?:\d+(?:\.\d+)?))))?'
+    r'(?P<minutes>\d+(?:\.\d+)?)'
+    r'(?::(?P<seconds>\d+(?:\.\d+)?))?\Z'
 )
 
-FLOAT_PATTERN = '\d+(?:\.\d+)*'
+FLOAT_PATTERN = r'\d+(?:\.\d+)*'
 
 DAYS = re.compile('(' + FLOAT_PATTERN + ')d')
 HOURS = re.compile('(' + FLOAT_PATTERN + ')h')
 MINUTES = re.compile('(' + FLOAT_PATTERN + ')m')
-SECONDS = re.compile('(' + FLOAT_PATTERN + ')(?:s|\\\Z)')
-TIME_UNITS = re.compile('(' + FLOAT_PATTERN + ')[dhms\\\Z]')
+SECONDS = re.compile('(' + FLOAT_PATTERN + r')(?:s|\Z)')
+TIME_UNITS = re.compile('(' + FLOAT_PATTERN + r')[dhms$]')
 
 def normalize_memory(memory):
     """
@@ -101,10 +101,10 @@ def make_time_string(days=0, hours=0, minutes=0, seconds=0):
     total_seconds -= minutes * 60.0
     seconds = total_seconds
 
-    hours = decimal.Decimal(hours).quantize(decimal.Decimal('1.'), decimal.ROUND_UP)
-    minutes = decimal.Decimal(minutes).quantize(decimal.Decimal('1.'), decimal.ROUND_UP)
-    seconds = decimal.Decimal(seconds).quantize(decimal.Decimal('1.'), decimal.ROUND_UP)
-    return '{:02f}:{:02f}:{:02f}'.format(hours, minutes, seconds)
+    hours = int(decimal.Decimal(hours).quantize(decimal.Decimal('1.'), decimal.ROUND_UP))
+    minutes = int(decimal.Decimal(minutes).quantize(decimal.Decimal('1.'), decimal.ROUND_UP))
+    seconds = int(decimal.Decimal(seconds).quantize(decimal.Decimal('1.'), decimal.ROUND_UP))
+    return '{:02d}:{:02d}:{:02d}'.format(hours, minutes, seconds)
 
 
 def normalize_time(time):

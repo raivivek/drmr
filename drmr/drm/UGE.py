@@ -155,7 +155,7 @@ class UGE(drmr.drm.base.DistributedResourceManager):
         qstat = lxml.objectify.fromstring(self.capture_process_output(command))
         job_list_items = qstat.job_info.job_list
         for job in job_list_items:
-            if job.state in ['E']:
+            if job.state == 'E':
                 continue
 
             if job_name and job_name not in job.JB_name:
